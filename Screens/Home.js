@@ -1,14 +1,36 @@
-import { View, Text, FlatList, StyleSheet, TextInput, TouchableOpacity, Keyboard, Pressable } from "react-native";
+import { View, Text, FlatList, StyleSheet, TextInput, TouchableOpacity, Keyboard, Pressable, SafeAreaView } from "react-native";
 import React, { useState, useEffect } from "react";
 import { firebase } from "../config";
 import { FontAwesome } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Button from "../components/Button";
 
 const Home = () => {
   const [todos, setTodos] = useState([]);
   const todoRef = firebase.firestore().collection("todos");
   const [addData, setAddData] = useState("");
   const navigation = useNavigation();
+  const [userDetails, setUserDetails] = React.useState();
+
+  React.useEffect(() => {
+    getUserData();
+  }, []);
+
+  const getUserData = async () => {
+    const userData = await AsyncStorage.getItem('userData');
+    if (userData) {
+      setUserDetails(JSON.parse(userData));
+    }
+  };
+
+  const logout = () => {
+    AsyncStorage.setItem(
+      'userData',
+      JSON.stringify({...userDetails, loggedIn: false}),
+    );
+    navigation.navigate('LoginScreen');
+  };
 
   // fetch or read the data from firebase
   useEffect(() => {
@@ -66,6 +88,9 @@ const Home = () => {
     <View style={{ flex: 1 }}>
       {/* Header */}
       <View style={styles.headerContainer}>
+      <Text style={styles.headerText}>
+        Welcome {userDetails?.fullname}
+      </Text>
         <Text style={styles.headerText}>Shopping List</Text>
       </View>
 
@@ -107,6 +132,15 @@ const Home = () => {
           </View>
         )}
       />
+       <View
+      style={{
+        // flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 10,
+      }}>
+      <Button title="Logout" onPress={logout} />
+    </View>
     </View>
   );
 };
@@ -175,7 +209,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "bold",
     color: "white",
-    paddingTop: 25,
+    padding: 10,
   },
 });
 
