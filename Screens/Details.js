@@ -2,7 +2,7 @@ import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
 import React, { useState } from "react";
 import { firebase } from "../config";
 import { useNavigation } from "@react-navigation/native";
-import { FontAwesome } from "@expo/vector-icons"; // Import FontAwesome for the back icon
+import { FontAwesome } from "@expo/vector-icons";
 
 const Details = ({ route }) => {
   const todoRef = firebase.firestore().collection("todos");

@@ -1,7 +1,9 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Provider } from "react-redux";
 
+import store from "./redux/store";
 import Home from "./Screens/Home";
 import Details from "./Screens/Details";
 import LoginScreen from "./Screens/LoginScreen";
@@ -35,31 +37,32 @@ const App = () => {
       }
     } catch (error) {
       setInitialRouteName("RegistrationScreen");
-    } 
+    }
   };
 
-
   return (
-    <NavigationContainer>
-      {!initialRouteName ? (
-        <Loader visible={true} />
-      ) : (
-        <>
-          <Stack.Navigator
-            initialRouteName={initialRouteName}
-            screenOptions={{ headerShown: true }}
-          >
-            <Stack.Screen
-              name="RegistrationScreen"
-              component={RegistrationScreen}
-            />
-            <Stack.Screen name="LoginScreen" component={LoginScreen} />
-            <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen name="Detail" component={Details} />
-          </Stack.Navigator>
-        </>
-      )}
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        {!initialRouteName ? (
+          <Loader visible={true} />
+        ) : (
+          <>
+            <Stack.Navigator
+              initialRouteName={initialRouteName}
+              screenOptions={{ headerShown: true }}
+            >
+              <Stack.Screen
+                name="RegistrationScreen"
+                component={RegistrationScreen}
+              />
+              <Stack.Screen name="LoginScreen" component={LoginScreen} />
+              <Stack.Screen name="Home" component={Home} />
+              <Stack.Screen name="Detail" component={Details} />
+            </Stack.Navigator>
+          </>
+        )}
+      </NavigationContainer>
+    </Provider>
   );
 };
 

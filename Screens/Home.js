@@ -1,8 +1,20 @@
-import { View, Text, FlatList, StyleSheet, TextInput, TouchableOpacity, Keyboard, Pressable, SafeAreaView } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Keyboard,
+  Pressable,
+  SafeAreaView,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { firebase } from "../config";
 import { FontAwesome } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchTodos, addNewTodo, deleteTodo } from "../redux/todoSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Button from "../components/Button";
 
@@ -18,7 +30,7 @@ const Home = () => {
   }, []);
 
   const getUserData = async () => {
-    const userData = await AsyncStorage.getItem('userData');
+    const userData = await AsyncStorage.getItem("userData");
     if (userData) {
       setUserDetails(JSON.parse(userData));
     }
@@ -26,10 +38,10 @@ const Home = () => {
 
   const logout = () => {
     AsyncStorage.setItem(
-      'userData',
-      JSON.stringify({...userDetails, loggedIn: false}),
+      "userData",
+      JSON.stringify({ ...userDetails, loggedIn: false })
     );
-    navigation.navigate('LoginScreen');
+    navigation.navigate("LoginScreen");
   };
 
   // fetch or read the data from firebase
@@ -46,6 +58,15 @@ const Home = () => {
       setTodos(todos);
     });
   }, []);
+
+  // Fetch todos from Redux state
+  // const todos = useSelector((state) => state.todos.todos);
+  const dispatch = useDispatch();
+
+  // Fetch todos when the component mounts
+  useEffect(() => {
+    dispatch(fetchTodos());
+  }, [dispatch]);
 
   // delete a todo from firebase db
   const deleteTodo = (todos) => {
@@ -88,10 +109,8 @@ const Home = () => {
     <View style={{ flex: 1 }}>
       {/* Header */}
       <View style={styles.headerContainer}>
-      <Text style={styles.headerText}>
-        Welcome {userDetails?.fullname}
-      </Text>
-        <Text style={styles.headerText}>Shopping List</Text>
+        <Text style={styles.headerText}>Welcome {userDetails?.fullname}</Text>
+        <Text style={styles.headerText}>Your Shopping List</Text>
       </View>
 
       <View style={styles.formContainer}>
@@ -132,15 +151,16 @@ const Home = () => {
           </View>
         )}
       />
-       <View
-      style={{
-        // flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 10,
-      }}>
-      <Button title="Logout" onPress={logout} />
-    </View>
+      <View
+        style={{
+          // flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          paddingHorizontal: 10,
+        }}
+      >
+        <Button title="Logout" onPress={logout} />
+      </View>
     </View>
   );
 };
